@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+<title id="title">Random-seed repetition: final Q error</title>
+<desc id="desc">Results from a reproducible Q-learning ablation study. The numerical source is saved in the results/ablations directory.</desc>
+<rect width="900" height="520" fill="white"/>
+<g font-family="Arial, sans-serif" fill="#263238">
+<text x="75" y="38" font-size="22" font-weight="bold">Random-seed repetition: final Q error</text>
+<line x1="100" y1="430.00" x2="850" y2="430.00" stroke="#e2e8e8"/>
+<text x="90" y="434.00" font-size="12" text-anchor="end">1.1e-05</text>
+<line x1="100" y1="345.00" x2="850" y2="345.00" stroke="#e2e8e8"/>
+<text x="90" y="349.00" font-size="12" text-anchor="end">8.6e-05</text>
+<line x1="100" y1="260.00" x2="850" y2="260.00" stroke="#e2e8e8"/>
+<text x="90" y="264.00" font-size="12" text-anchor="end">0.00065</text>
+<line x1="100" y1="175.00" x2="850" y2="175.00" stroke="#e2e8e8"/>
+<text x="90" y="179.00" font-size="12" text-anchor="end">0.0049</text>
+<line x1="100" y1="90.00" x2="850" y2="90.00" stroke="#e2e8e8"/>
+<text x="90" y="94.00" font-size="12" text-anchor="end">0.037</text>
+<line x1="100" y1="90" x2="100" y2="430" stroke="#657275"/>
+<line x1="100" y1="430" x2="850" y2="430" stroke="#657275"/>
+<rect x="133.00" y="273.43" width="84.00" height="156.57" fill="#187a72"/>
+<text x="175.00" y="454" font-size="12" text-anchor="middle">0</text>
+<text x="175.00" y="265.43" font-size="12" text-anchor="middle">0.000471216</text>
+<rect x="283.00" y="414.99" width="84.00" height="15.01" fill="#187a72"/>
+<text x="325.00" y="454" font-size="12" text-anchor="middle">1</text>
+<text x="325.00" y="406.99" font-size="12" text-anchor="middle">1.62908e-05</text>
+<rect x="433.00" y="395.81" width="84.00" height="34.19" fill="#187a72"/>
+<text x="475.00" y="454" font-size="12" text-anchor="middle">2</text>
+<text x="475.00" y="387.81" font-size="12" text-anchor="middle">2.57008e-05</text>
+<rect x="583.00" y="377.46" width="84.00" height="52.54" fill="#187a72"/>
+<text x="625.00" y="454" font-size="12" text-anchor="middle">3</text>
+<text x="625.00" y="369.46" font-size="12" text-anchor="middle">3.97546e-05</text>
+<rect x="733.00" y="96.96" width="84.00" height="333.04" fill="#187a72"/>
+<text x="775.00" y="454" font-size="12" text-anchor="middle">42</text>
+<text x="775.00" y="88.96" font-size="12" text-anchor="middle">0.0312484</text>
+<line x1="100" y1="163.94" x2="850" y2="163.94" stroke="#b8543c" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="850" y="155.94" font-size="12" text-anchor="end">mean 0.00636026</text>
+<text x="475" y="485" font-size="14" text-anchor="middle">Study condition</text>
+<text x="22" y="260" font-size="14" text-anchor="middle" transform="rotate(-90 22 260)">max |Q - Q*|</text>
+</g></svg>

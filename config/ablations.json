@@ -1,0 +1,36 @@
+{
+  "random_seed_repetition": {
+    "environment_config": "config/baseline.json",
+    "seeds": [0, 1, 2, 3, 42]
+  },
+  "training_budget": {
+    "environment_config": "config/baseline.json",
+    "seed": 42,
+    "episodes": [500, 1000, 2000, 5000, 10000]
+  },
+  "exploration_rate": {
+    "environment_config": "config/baseline.json",
+    "seed": 42,
+    "episodes": 10000,
+    "strategies": {
+      "current_decay": {
+        "label": "Current: 0.4 to 0.1 over 12000 episodes",
+        "epsilon_start": 0.4,
+        "epsilon_end": 0.1,
+        "epsilon_decay_episodes": 12000
+      },
+      "fixed_0.1": {
+        "label": "Fixed epsilon = 0.1",
+        "epsilon_start": 0.1,
+        "epsilon_end": 0.1,
+        "epsilon_decay_episodes": 1
+      },
+      "fast_decay": {
+        "label": "Fast decay: 0.4 to 0.01 over 2000 episodes",
+        "epsilon_start": 0.4,
+        "epsilon_end": 0.01,
+        "epsilon_decay_episodes": 2000
+      }
+    }
+  }
+}

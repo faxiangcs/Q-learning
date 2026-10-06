@@ -1,0 +1,4 @@
+strategy,label,epsilon_start,epsilon_end,epsilon_decay_episodes,seed,episodes,success_rate,success_rate_last_500,mean_return_last_500,mean_steps_last_500,final_q_max_abs_error,final_q_rmse,min_action_visits
+current_decay,Current: 0.4 to 0.1 over 12000 episodes,0.4,0.1,12000,42,10000,1.0,1.0,98.636,2.364,0.0312483507564707,0.00905553114616955,48
+fixed_0.1,Fixed epsilon = 0.1,0.1,0.1,1,42,10000,1.0,1.0,98.808,2.192,76.49996665117072,33.178920871896395,3
+fast_decay,Fast decay: 0.4 to 0.01 over 2000 episodes,0.4,0.01,2000,42,10000,1.0,1.0,98.99,2.01,49.04144195705656,17.24386428528618,6

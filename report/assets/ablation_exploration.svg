@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-labelledby="title desc">
+<title id="title">Exploration schedules: final Q error (log scale)</title>
+<desc id="desc">Results from a reproducible Q-learning ablation study. The numerical source is saved in the results/ablations directory.</desc>
+<rect width="900" height="520" fill="white"/>
+<g font-family="Arial, sans-serif" fill="#263238">
+<text x="75" y="38" font-size="22" font-weight="bold">Exploration schedules: final Q error (log scale)</text>
+<line x1="100" y1="430.00" x2="850" y2="430.00" stroke="#e2e8e8"/>
+<text x="90" y="434.00" font-size="12" text-anchor="end">0.022</text>
+<line x1="100" y1="345.00" x2="850" y2="345.00" stroke="#e2e8e8"/>
+<text x="90" y="349.00" font-size="12" text-anchor="end">0.18</text>
+<line x1="100" y1="260.00" x2="850" y2="260.00" stroke="#e2e8e8"/>
+<text x="90" y="264.00" font-size="12" text-anchor="end">1.4</text>
+<line x1="100" y1="175.00" x2="850" y2="175.00" stroke="#e2e8e8"/>
+<text x="90" y="179.00" font-size="12" text-anchor="end">11</text>
+<line x1="100" y1="90.00" x2="850" y2="90.00" stroke="#e2e8e8"/>
+<text x="90" y="94.00" font-size="12" text-anchor="end">90</text>
+<line x1="100" y1="90" x2="100" y2="430" stroke="#657275"/>
+<line x1="100" y1="430" x2="850" y2="430" stroke="#657275"/>
+<rect x="155.00" y="415.43" width="140.00" height="14.57" fill="#187a72"/>
+<text x="225.00" y="454" font-size="12" text-anchor="middle">current_decay</text>
+<text x="225.00" y="407.43" font-size="12" text-anchor="middle">0.0312484</text>
+<rect x="405.00" y="96.76" width="140.00" height="333.24" fill="#187a72"/>
+<text x="475.00" y="454" font-size="12" text-anchor="middle">fixed_0.1</text>
+<text x="475.00" y="88.76" font-size="12" text-anchor="middle">76.5</text>
+<rect x="655.00" y="114.92" width="140.00" height="315.08" fill="#187a72"/>
+<text x="725.00" y="454" font-size="12" text-anchor="middle">fast_decay</text>
+<text x="725.00" y="106.92" font-size="12" text-anchor="middle">49.0414</text>
+<text x="475" y="485" font-size="14" text-anchor="middle">Study condition</text>
+<text x="22" y="260" font-size="14" text-anchor="middle" transform="rotate(-90 22 260)">max |Q - Q*|</text>
+</g></svg>

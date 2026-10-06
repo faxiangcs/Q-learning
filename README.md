@@ -23,6 +23,20 @@ python3 code/run_experiments.py --config config/start_A_goal_C.json
 python3 -m unittest discover -s code -v
 ```
 
+三组消融实验：
+
+```sh
+python3 code/run_ablations.py
+```
+
+消融实验的设置写在 `config/ablations.json`，只研究 C→F 环境，并保持奖励、学习率、折扣因子和状态图不变：
+
+- 随机种子重复：种子 `0, 1, 2, 3, 42`，每次 10,000 回合；报告成功率、最后 500 回合平均回报和步数、最终 Q 表误差、最少动作访问次数，并给出均值和样本标准差。
+- 训练预算：固定种子 `42`，比较 `500、1000、2000、5000、10000` 回合。
+- 探索率：固定种子 `42` 和 10,000 回合，比较当前的 `0.4→0.1/12000`、固定 `ε=0.1`、以及 `0.4→0.01/2000` 的快速衰减。
+
+这里的 `final_q_max_abs_error` 是最终 Q 表与独立动态规划参考 Q* 的最大绝对差。Q* 只用于这个小型确定性环境的离线诊断，不参与 Q-learning 更新。成功率、回报和步数反映起点策略表现；动作访问次数和 Q* 误差用于识别“成功到达目标但没有充分学习整张表”的情况。
+
 修改 JSON 中的 `start_state` 和 `target_state` 即可自定义起点、目标；也可在命令行覆盖单个配置，例如：
 
 ```sh
@@ -46,9 +60,11 @@ python3 code/run_experiments.py --config config/baseline.json --start B --target
 | `code/environment.py` | 校验配置并定义状态、合法动作、确定性转移、奖励和终止规则。 |
 | `code/q_learning.py` | Q 表初始化、ε-greedy 选动作、Q-learning 更新及逐回合记录。 |
 | `code/run_experiments.py` | 运行配置、打印最终 Q 表、输出 CSV 和 SVG，并更新 HTML 中的结果表格。 |
+| `code/run_ablations.py` | 运行三组 C→F 消融实验，计算 Q* 误差、成功率、回报、步数和动作覆盖率，输出 CSV/SVG，并更新 HTML 报告。 |
 | `code/test_q_learning.py` | 检查终止更新、自定义起点/目标和固定种子的可复现性。 |
 | `config/baseline.json` | C→F 实验的图结构、奖励、终止规则与训练参数。 |
 | `config/start_A_goal_C.json` | A→C 实验的图结构、奖励、终止规则与训练参数。 |
+| `config/ablations.json` | 三组消融实验的随机种子、训练预算和探索率策略。 |
 | `report/index.html` | 离线 HTML 报告，包含环境、方法、设置、两组结果表格及收敛图；比较分析等内容尚待完成。 |
 | `report/assets/baseline_convergence.svg` | 从 `results/baseline/convergence.csv` 对应实验生成的 C→F 收敛图。 |
 | `report/assets/start_A_goal_C_convergence.svg` | 从 `results/start_A_goal_C/convergence.csv` 对应实验生成的 A→C 收敛图。 |
@@ -58,6 +74,14 @@ python3 code/run_experiments.py --config config/baseline.json --start B --target
 | `results/start_A_goal_C/q_initial.csv` | A→C 训练前的合法状态动作 Q 值。 |
 | `results/start_A_goal_C/q_final.csv` | A→C 训练后的 Q 值与动作访问次数。 |
 | `results/start_A_goal_C/convergence.csv` | A→C 每回合的完整 Q 表和收敛指标。 |
+| `results/ablations/random_seeds.csv` | 五个随机种子的逐次结果。 |
+| `results/ablations/random_seed_summary.csv` | 五个种子的指标均值、样本标准差、最小值和最大值。 |
+| `results/ablations/q_star_reference.csv` | 用独立动态规划计算的 C→F 参考 Q*，只用于评估误差，不参与训练。 |
+| `results/ablations/training_budget.csv` | 固定种子下五种训练回合数的结果。 |
+| `results/ablations/exploration_rates.csv` | 三种探索率策略的结果。 |
+| `report/assets/ablation_random_seeds.svg` | 随机种子重复实验的最终 Q 误差图。 |
+| `report/assets/ablation_training_budget.svg` | 训练预算与最终 Q 误差图，纵轴为对数尺度。 |
+| `report/assets/ablation_exploration.svg` | 探索率策略与最终 Q 误差图，纵轴为对数尺度。 |
 
 仓库中的 `.gitignore` 只用于版本控制；题目 PDF 供参考。这两个文件不属于上述提交成果。
 
