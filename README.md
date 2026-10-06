@@ -1,34 +1,68 @@
 # IOTA 5201 Mid-Term Assignment: Implementing Q-Learning
 
-本目录是作业提交包的文件骨架。目前除本 README、题目 PDF 和 `.gitignore` 外，提交成果文件均为空占位文件，尚不能运行程序或打开报告。完成作业后，将本 README、`code/`、`config/`、`report/`、`results/` 和 `requirements.txt` 打成一个 ZIP 提交。`IOTA_Assignment-1.pdf` 是题目原文，不是要求提交的成果文件。
+本目录包含两组可复现的 Q-learning 实验。运行脚本会重新生成 `results/` 中的 CSV、`report/assets/` 中的 SVG 图，并把结果写入 `report/index.html`。完成报告的其余分析后，将本 README、`code/`、`config/`、`report/`、`results/` 和 `requirements.txt` 打成一个 ZIP 提交。`IOTA_Assignment-1.pdf` 是题目原文，不是要求提交的成果文件。
+
+## 运行方法
+
+需要 Python 3.10 或更新版本；仅使用标准库，`requirements.txt` 无第三方依赖。在本目录执行：
+
+```sh
+python3 code/run_experiments.py
+```
+
+这条命令依次运行 C→F 和 A→C 两组实验，打印最终 Q 表，并重新生成所有 CSV、两张 SVG 收敛图及 HTML 报告中的结果表格。也可以只运行其中一组：
+
+```sh
+python3 code/run_experiments.py --config config/baseline.json
+python3 code/run_experiments.py --config config/start_A_goal_C.json
+```
+
+核心逻辑自检：
+
+```sh
+python3 -m unittest discover -s code -v
+```
+
+修改 JSON 中的 `start_state` 和 `target_state` 即可自定义起点、目标；也可在命令行覆盖单个配置，例如：
+
+```sh
+python3 code/run_experiments.py --config config/baseline.json --start B --target E
+```
+
+覆盖运行会写入独立的 `results/baseline_B_to_E/` 和 `report/assets/baseline_B_to_E_convergence.svg`，不会覆盖两组规定实验的结果，也不会改动 HTML 报告。可用 `--output-dir` 和 `--plot` 指定自定义输出位置。直接用浏览器打开 `report/index.html` 即可阅读，无需本地服务器或外部服务。
+
+## 实验设置与输出
+
+两组实验均将所有合法 `Q(s,a)` 初始化为 `0.0`，学习率 `α=0.2`，折扣因子 `γ=0.9`，训练 `10,000` 回合，随机种子 `42`。ε-greedy 的 ε 在前 `12,000` 回合从 `0.4` 线性下降到 `0.1`，所以本次训练最后一个回合约为 `0.15`；继续训练到第 12,000 回合后才达到 `0.1`。每回合至多 `30` 步。探索时在合法动作中均匀随机选择，利用时在最大 Q 值的并列动作中随机选择。进入目标时不再加未来价值；达到步数上限为截断，不视为到达目标。
+
+`convergence.csv` 每行对应一个回合：`Q_状态_动作` 列是该回合结束后的整张 Q 表，`max_abs_q_change` 是相对回合开始时所有合法 Q 值的最大绝对变化，还记录 ε、总奖励、步数和是否到达目标。SVG 上半部分画出所有合法 Q 值，突出起点的动作；下半部分画出 `max_abs_q_change`。图为便于阅读抽样约 300 个回合点，CSV 保留全部 `10,000` 回合。Q 表 CSV 的 `visit_count` 可帮助判断较少探索的动作是否可信；曲线稳定不等于已证明最优。
 
 ## 文件说明
 
 | 文件 | 用途和后续需要填写的内容 |
 | --- | --- |
-| `README.md` | 提交包说明。完成后补充依赖安装方式、两组实验的准确运行命令、图表再生成命令，以及结果文件与报告章节的对应关系。 |
-| `requirements.txt` | 记录运行代码和生成报告图表所需的 Python 依赖及具体版本。若改用其他语言，也应在 README 中说明对应依赖。 |
-| `code/environment.py` | 定义图 1 的 A-F 状态、可选动作、合法转移、奖励和回合终止条件。 |
-| `code/q_learning.py` | 实现 Q 表初始化、动作选择、Q-learning 更新、终止状态处理和训练过程。原有的空 `code.py` 占位文件已整理到这里。 |
-| `code/run_experiments.py` | 运行两组配置，固定并记录随机种子，保存 Q 表和收敛数值，并生成报告使用的图。 |
-| `config/baseline.json` | 原始起点/目标配置，以及学习率、折扣因子、探索参数、训练轮数、随机种子等设置。图 1 似乎表示机器人从 C 前往 F；题目正文未明示，实施时应核实并在报告中说明采用的解释。 |
-| `config/start_A_goal_C.json` | 修改后的配置：起点 A、目标 C；记录其余实验参数，便于与原始配置比较。 |
-| `report/index.html` | 必交的 HTML 技术报告。应包含方法、环境和实验设置、两组初始与最终 Q 表、收敛图及指标解释、比较分析、结论、参考资料、姓名、学号和 AI 使用声明。 |
-| `report/assets/baseline_convergence.svg` | 原始配置的 Q 值收敛图；完成后由实际实验数据生成，并在报告中引用。 |
-| `report/assets/start_A_goal_C_convergence.svg` | A→C 配置的 Q 值收敛图；完成后由实际实验数据生成，并在报告中引用。 |
-| `results/baseline/q_initial.csv` | 原始配置训练前的 Q 表，机器可读。 |
-| `results/baseline/q_final.csv` | 原始配置训练后的 Q 表，机器可读。 |
-| `results/baseline/convergence.csv` | 原始配置收敛图对应的逐轮或定期采样数值，机器可读。 |
-| `results/start_A_goal_C/q_initial.csv` | A→C 配置训练前的 Q 表，机器可读。 |
-| `results/start_A_goal_C/q_final.csv` | A→C 配置训练后的 Q 表，机器可读。 |
-| `results/start_A_goal_C/convergence.csv` | A→C 配置收敛图对应的数值，机器可读。 |
+| `README.md` | 依赖、参数、复现命令和提交文件说明。 |
+| `requirements.txt` | 声明无第三方依赖及 Python 最低版本。 |
+| `code/environment.py` | 校验配置并定义状态、合法动作、确定性转移、奖励和终止规则。 |
+| `code/q_learning.py` | Q 表初始化、ε-greedy 选动作、Q-learning 更新及逐回合记录。 |
+| `code/run_experiments.py` | 运行配置、打印最终 Q 表、输出 CSV 和 SVG，并更新 HTML 中的结果表格。 |
+| `code/test_q_learning.py` | 检查终止更新、自定义起点/目标和固定种子的可复现性。 |
+| `config/baseline.json` | C→F 实验的图结构、奖励、终止规则与训练参数。 |
+| `config/start_A_goal_C.json` | A→C 实验的图结构、奖励、终止规则与训练参数。 |
+| `report/index.html` | 离线 HTML 报告，包含环境、方法、设置、两组结果表格及收敛图；比较分析等内容尚待完成。 |
+| `report/assets/baseline_convergence.svg` | 从 `results/baseline/convergence.csv` 对应实验生成的 C→F 收敛图。 |
+| `report/assets/start_A_goal_C_convergence.svg` | 从 `results/start_A_goal_C/convergence.csv` 对应实验生成的 A→C 收敛图。 |
+| `results/baseline/q_initial.csv` | C→F 训练前的合法状态动作 Q 值。 |
+| `results/baseline/q_final.csv` | C→F 训练后的 Q 值与动作访问次数。 |
+| `results/baseline/convergence.csv` | C→F 每回合的完整 Q 表和收敛指标。 |
+| `results/start_A_goal_C/q_initial.csv` | A→C 训练前的合法状态动作 Q 值。 |
+| `results/start_A_goal_C/q_final.csv` | A→C 训练后的 Q 值与动作访问次数。 |
+| `results/start_A_goal_C/convergence.csv` | A→C 每回合的完整 Q 表和收敛指标。 |
 
 仓库中的 `.gitignore` 只用于版本控制；题目 PDF 供参考。这两个文件不属于上述提交成果。
 
 ## 提交前补齐
 
-- 在 `requirements.txt` 填写实际使用的版本，并在两份配置中填写完整参数和随机种子。
-- 在此处写明依赖安装、运行原始配置、运行 A→C 配置以及重新生成两幅图的准确命令。
-- 运行并核验两组实验，填充所有 Q 表、收敛数据和图；报告中的数值应与这些文件一致。若讨论结果的稳定性或可靠性，按需要增加重复运行数据。
-- 确认 `report/index.html` 无需账号、付费服务、AI 工具或实时训练即可阅读；若需要本地服务器，在此处给出启动命令。如使用站点生成器或 Web 框架，附上可编辑源码和构建说明。
-- 检查图表坐标轴、图注、重要视觉内容的文字说明、参考资料和 AI 使用声明；最后将上述成果文件打包为一个 ZIP。
+- 补全报告中的跨实验比较、局限、结论、参考资料、姓名、学号和 AI 使用声明。
+- 如需声称训练结果对随机性稳健，应在多个随机种子上重复运行，保存并分析各次结果。
+- 最后检查报告的图表和文字与 CSV 一致，再将成果文件打包为一个 ZIP。

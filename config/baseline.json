@@ -1,1 +1,39 @@
-
+{
+  "experiment": "baseline_C_to_F",
+  "states": ["A", "B", "C", "D", "E", "F"],
+  "start_state": "C",
+  "target_state": "F",
+  "adjacency": {
+    "A": ["E"],
+    "B": ["C", "D", "F"],
+    "C": ["B", "D"],
+    "D": ["B", "C", "E"],
+    "E": ["A", "D", "F"],
+    "F": ["B", "E"]
+  },
+  "action_semantics": "move_to_adjacent_state",
+  "transition": {
+    "type": "deterministic",
+    "next_state": "selected_action",
+    "invalid_actions": "excluded"
+  },
+  "rewards": {
+    "non_target_move": -1,
+    "enter_target": 100
+  },
+  "termination": {
+    "on_enter_target": true,
+    "max_steps_per_episode": 30,
+    "on_step_limit": "truncated_without_goal_reward"
+  },
+  "training": {
+    "q_initial_value": 0.0,
+    "learning_rate": 0.2,
+    "discount_factor": 0.9,
+    "epsilon_start": 0.4,
+    "epsilon_end": 0.1,
+    "epsilon_decay_episodes": 12000,
+    "episodes": 10000,
+    "random_seed": 42
+  }
+}
