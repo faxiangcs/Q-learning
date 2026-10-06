@@ -54,7 +54,7 @@
     <p>Actions are selected with an ε-greedy policy. With probability ε, the agent samples uniformly from the legal adjacent regions to explore. Otherwise, it chooses an action with the largest current Q value; if several actions tie, one of the tied actions is sampled randomly. The main experiments use ε decreasing linearly from 0.4 to 0.1, learning rate <code>α = 0.2</code>, discount factor <code>γ = 0.9</code>, zero initialization, 10,000 episodes, and random seed 42. This combination lets the agent discover less obvious routes while gradually favoring the learned policy.</p>
 
     <h2>Environment model</h2>
-    <p>The state is the robot's current region, one of <code>A, B, C, D, E, F</code>; an action selects an adjacent region and the transition is deterministic. Because the assignment figure does not provide a formal adjacency table, this report makes the following explicit bidirectional interpretation, including the direct B-C connection:</p>
+    <p>The state is the robot's current region, one of <code>A, B, C, D, E, F</code>; an action selects an adjacent region and the transition is deterministic. This report makes the following explicit bidirectional interpretation:</p>
     <table>
       <thead><tr><th scope="col">Current state</th><th scope="col">Adjacent states and available actions</th></tr></thead>
       <tbody>
