@@ -1,1 +1,1 @@
-IOTA mid-term assignment
+IOTA Mid-Term Assignment: Implementing Q-Learning
