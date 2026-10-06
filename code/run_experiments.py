@@ -133,6 +133,76 @@ def draw_plot(path: Path, environment: Environment, result) -> None:
     path.write_text("\n".join(pieces) + "\n", encoding="utf-8")
 
 
+def draw_case_study_heatmap(path: Path, environment: Environment, result) -> None:
+    """Draw the final C-to-F Q table as an annotated state/action heatmap."""
+    width, height = 900, 640
+    left, top = 170, 130
+    cell_width, cell_height = 96, 58
+    columns = list(environment.states)
+    q_values = list(result.final_q.values())
+    value_min, value_max = 0.0, max(100.0, max(q_values, default=100.0))
+
+    def color(value: float) -> str:
+        ratio = max(0.0, min(1.0, (value - value_min) / (value_max - value_min)))
+        red = round(242 - 223 * ratio)
+        green = round(247 - 119 * ratio)
+        blue = round(244 - 133 * ratio)
+        return f"rgb({red},{green},{blue})"
+
+    parts = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
+        '<title id="title">Annotated final Q-value heatmap for the C to F case study</title>',
+        '<desc id="desc">Rows are current states and columns are possible next states. Darker cells have larger learned Q values. Gray cells are illegal actions or the terminal state. Orange outlines mark greedy actions. The highlighted route is C to B to F.</desc>',
+        f'<rect width="{width}" height="{height}" fill="white"/>',
+        '<g font-family="Arial, sans-serif" fill="#263238">',
+        '<text x="70" y="38" font-size="22" font-weight="bold">Case study: how C reaches F</text>',
+        '<text x="70" y="66" font-size="14">Final Q values after 10,000 episodes; rows are current states and columns are next states</text>',
+        '<text x="70" y="91" font-size="13">Darker cells mean a higher expected discounted return. Orange outlines mark the greedy action in each non-terminal row.</text>',
+        '<text x="115" y="145" font-size="14" text-anchor="middle" font-weight="bold">State</text>',
+    ]
+    for index, state in enumerate(columns):
+        x = left + index * cell_width + cell_width / 2
+        parts.append(f'<text x="{x:.1f}" y="145" font-size="14" text-anchor="middle" font-weight="bold">next {html.escape(state)}</text>')
+
+    for row_index, state in enumerate(environment.states):
+        y = top + row_index * cell_height
+        parts.append(f'<text x="115" y="{y + 35}" font-size="14" text-anchor="middle" font-weight="bold">{html.escape(state)}</text>')
+        legal_actions = environment.available_actions(state)
+        best_value = max((result.final_q[state, action] for action in legal_actions), default=None)
+        for col_index, action in enumerate(columns):
+            x = left + col_index * cell_width
+            key = (state, action)
+            if key in result.final_q:
+                value = result.final_q[key]
+                fill = color(value)
+                text_color = "white" if value >= 58 else "#263238"
+                best = best_value is not None and abs(value - best_value) <= 1e-6
+                stroke = "#b8543c" if best else "#ffffff"
+                stroke_width = 3 if best else 1
+                parts.append(f'<rect x="{x}" y="{y}" width="{cell_width}" height="{cell_height}" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}"/>')
+                parts.append(f'<text x="{x + cell_width / 2}" y="{y + 25}" font-size="15" text-anchor="middle" fill="{text_color}" font-weight="{"bold" if best else "normal"}">{value:.1f}</text>')
+                parts.append(f'<text x="{x + cell_width / 2}" y="{y + 45}" font-size="11" text-anchor="middle" fill="{text_color}">{html.escape(state)} → {html.escape(action)}</text>')
+                parts.append(f'<title>Q({html.escape(state)}, {html.escape(action)}) = {value:.6f}'+("; greedy action" if best else "")+'</title>')
+            else:
+                label = "terminal" if state == environment.target_state else "-"
+                parts.append(f'<rect x="{x}" y="{y}" width="{cell_width}" height="{cell_height}" fill="#edf1f1" stroke="#ffffff" stroke-width="1"/>')
+                parts.append(f'<text x="{x + cell_width / 2}" y="{y + 34}" font-size="13" text-anchor="middle" fill="#667477">{label}</text>')
+
+    legend_y = top + len(environment.states) * cell_height + 36
+    parts.append(f'<text x="{left}" y="{legend_y}" font-size="13">Q-value scale</text>')
+    for index, value in enumerate((0, 25, 50, 75, 100)):
+        x = left + 104 + index * 74
+        parts.append(f'<rect x="{x}" y="{legend_y - 16}" width="45" height="15" fill="{color(value)}" stroke="#ffffff"/>')
+        parts.append(f'<text x="{x + 22.5}" y="{legend_y + 12}" font-size="11" text-anchor="middle">{value}</text>')
+    parts.append(f'<rect x="{left + 505}" y="{legend_y - 16}" width="45" height="15" fill="#edf1f1" stroke="#ffffff"/>')
+    parts.append(f'<text x="{left + 560}" y="{legend_y - 4}" font-size="12">illegal / terminal</text>')
+    parts.append(f'<rect x="{left + 635}" y="{legend_y - 16}" width="35" height="15" fill="white" stroke="#b8543c" stroke-width="3"/>')
+    parts.append(f'<text x="{left + 685}" y="{legend_y - 4}" font-size="12">greedy</text>')
+    parts.append('<text x="70" y="610" font-size="14"><tspan font-weight="bold">Reading the case:</tspan> Q(C,B) = 89.0 is larger than Q(C,D) = 79.1, then Q(B,F) = 100.0. The greedy route is therefore C → B → F.</text>')
+    parts.append('</g></svg>')
+    path.write_text("\n".join(parts) + "\n", encoding="utf-8")
+
+
 def print_summary(environment: Environment, result, output_dir: Path, plot_path: Path) -> None:
     successes = sum(record.reached_target for record in result.records)
     final = result.records[-1]
@@ -228,6 +298,8 @@ def run_config(config_path: Path, start: str | None, target: str | None,
             and config_path.resolve() in (path.resolve() for path in DEFAULT_CONFIGS)
             and output_dir == ROOT / "results" / config_path.stem
             and plot_path == ROOT / "report/assets" / f"{config_path.stem}_convergence.svg"):
+        if config_path.stem == "baseline":
+            draw_case_study_heatmap(ROOT / "report/assets/case_study_q_heatmap.svg", environment, result)
         section = "BASELINE" if config_path.stem == "baseline" else "CHANGED"
         update_report(environment, result, plot_path, section)
     print_summary(environment, result, output_dir, plot_path)
