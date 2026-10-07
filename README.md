@@ -1,6 +1,5 @@
 # IOTA 5201 Mid-Term Assignment: Implementing Q-Learning
-Name：Faxiang Yan， ID：50051798
-本目录为期中项目的代码库，包含两组 Q-learning 实验以及消融实验。运行脚本会重新生成 `results/` 中的 CSV、`report/assets/` 中的 SVG 图，并把结果写入最终报告 `report/index.html`。
+Name：Faxiang Yan，ID：50051798，本目录为期中项目的代码库，包含两组 Q-learning 实验以及消融实验。运行脚本会重新生成 `results/` 中的 CSV、`report/assets/` 中的 SVG 图，并把结果写入最终报告 `report/index.html`。
 
 ## 运行方法
 
